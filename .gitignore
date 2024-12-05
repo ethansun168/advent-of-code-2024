@@ -1,0 +1,4 @@
+.vscode
+day*
+!*.cpp
+!*.input
