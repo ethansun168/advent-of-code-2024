@@ -27,9 +27,6 @@ void antinode(std::set<std::pair<int, int>>& antinodes, std::pair<int, int> one,
     std::pair<int, int> diff = {two.first - one.first, two.second - one.second};
     std::pair<int, int> node1 = {one.first - diff.first, one.second - diff.second};
     std::pair<int, int> node2 = {two.first + diff.first, two.second + diff.second};
-    // std::pair<int, int> diff = {one.first - two.first, one.second - two.second};
-    // std::pair<int, int> node1 = {one.first + diff.first, one.second + diff.second};
-    // std::pair<int, int> node2 = {two.first - diff.first, two.second - diff.second};
     
     if (inMap(node1, rowSize, colSize)) {
         antinodes.insert(node1);
@@ -74,6 +71,6 @@ int main(int argc, char** argv) {
         ++row;
     }
     
-    std::set<std::pair<int, int>> antinodes = findAntinodes(antennas, row, col);
+    std::set<std::pair<int, int>> antinodes = findAntinodes(antennas, row - 1, col - 1);
     std::cout << antinodes.size() << std::endl;
 }
