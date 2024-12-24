@@ -82,17 +82,6 @@ int main() {
     }
 
     int score = 0;
-    // for (const auto& row : grid) {
-    //     for (const auto& ch : row) {
-    //         if (ch == -1) {
-    //             std::cout << ". ";
-    //         }
-    //         else {
-    //             std::cout << ch << " ";
-    //         }
-    //     }
-    //     std::cout << std::endl;
-    // }
     for (const auto& point : trailheads) {
         score += countScore(grid, point); 
     }

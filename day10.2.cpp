@@ -13,7 +13,6 @@ struct Point {
 int countScore(const std::vector<std::vector<int>>& grid, Point p) {
     int score = 0;
     std::deque<Point> search;
-    // std::vector<std::vector<bool>> visited(grid.size(), std::vector<bool>(grid[0].size(), false));
     search.push_back(p);
 
     while (!search.empty()) {
@@ -21,11 +20,6 @@ int countScore(const std::vector<std::vector<int>>& grid, Point p) {
         int col = search.front().col;
         int val = search.front().val;
         search.pop_front();
-        // std::cout << row << " " << col << " " << val << std::endl;
-        // if (visited[row][col]) {
-        //     continue;
-        // }
-        // visited[row][col] = true;
 
         if (val == 9) {
             score += 1;
@@ -81,17 +75,6 @@ int main() {
     }
 
     int score = 0;
-    // for (const auto& row : grid) {
-    //     for (const auto& ch : row) {
-    //         if (ch == -1) {
-    //             std::cout << ". ";
-    //         }
-    //         else {
-    //             std::cout << ch << " ";
-    //         }
-    //     }
-    //     std::cout << std::endl;
-    // }
     for (const auto& point : trailheads) {
         score += countScore(grid, point); 
     }
