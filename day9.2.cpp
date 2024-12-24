@@ -8,6 +8,8 @@
 #include <queue>
 #include <ranges>
 
+// This is wrong but idk why
+
 void moveFiles(
     std::map<int, std::pair<int, int>>& fileInfo,
     std::map<int, int> freeIndices
@@ -115,5 +117,7 @@ int main() {
 00000....111..2
 000002111
 0 + 2*5 + 1*6 + 1*7 + 1*8 = 31
+
+
 
 */
