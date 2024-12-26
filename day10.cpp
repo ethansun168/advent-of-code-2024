@@ -10,7 +10,7 @@ struct Point {
     int val;
 };
 
-int countScore(const std::vector<std::vector<int>>& grid, Point p) {
+int countScore(const std::vector<std::vector<int>>& grid, Point p, bool part1) {
     int score = 0;
     std::deque<Point> search;
     std::vector<std::vector<bool>> visited(grid.size(), std::vector<bool>(grid[0].size(), false));
@@ -22,8 +22,10 @@ int countScore(const std::vector<std::vector<int>>& grid, Point p) {
         int val = search.front().val;
         search.pop_front();
         // std::cout << row << " " << col << " " << val << std::endl;
-        if (visited[row][col]) {
-            continue;
+        if (part1) {
+            if (visited[row][col]) {
+                continue;
+            }
         }
         visited[row][col] = true;
 
@@ -48,10 +50,7 @@ int countScore(const std::vector<std::vector<int>>& grid, Point p) {
         if (row - 1 >= 0 && grid[row - 1][col] == val + 1) {
             search.push_back({row - 1, col, val + 1});
         }
-
     }
-
-
     return score;
 }
 
@@ -83,8 +82,14 @@ int main() {
 
     int score = 0;
     for (const auto& point : trailheads) {
-        score += countScore(grid, point); 
+        score += countScore(grid, point, true); 
     }
+    std::cout << "Part 1: " << score << std::endl;
 
-    std::cout << score << std::endl;
+    score = 0;
+    for (const auto& point : trailheads) {
+        score += countScore(grid, point, false); 
+    }
+    std::cout << "Part 2: " << score << std::endl;
+
 }
