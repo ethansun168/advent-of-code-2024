@@ -5,7 +5,34 @@
 #include <string>
 #include <sstream>
 
-bool isSafe(const std::vector<int>& vec) {
+bool part1(const std::vector<int>& vec) {
+    if(vec.empty() || vec.size() == 1) {
+        return true;
+    }
+
+    if (vec[0] < vec[1]) {
+        // vec must be increasing
+        for (int i = 1; i < vec.size(); ++i) {
+            if (vec[i] - vec[i - 1] > 3 || vec[i] - vec[i - 1] < 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+    else {
+        // vec must be decreasing
+        for (int i = 1; i < vec.size(); ++i) {
+            if (vec[i - 1] - vec[i] > 3 || vec[i - 1] - vec[i] < 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    return false;
+}
+
+bool part2(const std::vector<int>& vec) {
     if(vec.size() < 3) {
         return true;
     }
@@ -43,7 +70,6 @@ bool isSafe(const std::vector<int>& vec) {
         ++remove;
     }
 
-
     return false;
 }
 
@@ -51,7 +77,8 @@ int main(int argc, char** argv) {
 
     // handle input
     std::string line;
-    int count = 0;
+    int count1 = 0;
+    int count2 = 0;
     while(getline(std::cin, line)) {
         std::stringstream ss(line);
         int num;
@@ -59,13 +86,15 @@ int main(int argc, char** argv) {
         while (ss >> num) {
             l.push_back(num);
         }
-
-        if (isSafe(l)) {
-            ++count;
+        if (part1(l)) {
+            ++count1;
+        }
+        if (part2(l)) {
+            ++count2;
         }
     }
-    std::cout << count << std::endl;
-
+    std::cout << "Part 1: " << count1 << std::endl;
+    std::cout << "Part 2: " << count2 << std::endl;
 
     return 0;
 }
