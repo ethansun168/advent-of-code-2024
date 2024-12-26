@@ -19,7 +19,7 @@ struct pair_hash {
     }
 };
 
-int calcPrice(const std::unordered_map<std::pair<int, int>, bool, pair_hash>& region) {
+int part1(const std::unordered_map<std::pair<int, int>, bool, pair_hash>& region) {
     int area = region.size();
     int perimeter = 0;
     for (const auto& [point, exist] : region) {
@@ -40,11 +40,84 @@ int calcPrice(const std::unordered_map<std::pair<int, int>, bool, pair_hash>& re
     return area * perimeter;
 }
 
+int part2(const std::unordered_map<std::pair<int, int>, bool, pair_hash>& region) {
+    int area = region.size();
+    // Expand from top left to bottom right
+    int sides = 0;
+    for (const auto& [point, exist] : region) {
+        // Left
+        /*
+            if left exists, do nothing
+            else if top left corner exists, + 1
+            else if top does not exist, +1
+            else +0
+        */
 
-int totalPrice(const std::vector<std::vector<char>>& grid) {
+        if (region.find({point.first, point.second - 1}) == region.end()) {
+            if (region.find({point.first - 1, point.second - 1}) != region.end()) {
+                ++sides;
+            }
+            else if(region.find({point.first - 1, point.second}) == region.end()) {
+                ++sides;
+            }
+        }
+
+        // Up
+        /*
+            if up exists, do nothing
+            else if top left corner exists, +1
+            else if left does not exist, +1
+            else +0
+        */
+        if (region.find({point.first - 1, point.second}) == region.end()) {
+            if (region.find({point.first - 1, point.second - 1}) != region.end()) {
+                ++sides;
+            }
+            else if (region.find({point.first, point.second - 1}) == region.end()) {
+                ++sides;
+            }
+        }
+
+        // Right
+        /*
+            if right exists, do nothing
+            else if top right corner exists, +1
+            else if up does not exist, +1
+            else +0 
+        */
+        if (region.find({point.first, point.second + 1}) == region.end()) {
+            if (region.find({point.first - 1, point.second + 1}) != region.end()) {
+                ++sides;
+            }
+            else if (region.find({point.first - 1, point.second}) == region.end()) {
+                ++sides;
+            }
+        }
+
+        // Down
+        /*
+            if down exists, do nothing
+            else if bottom left corner exists, +1
+            else if left does not exist, +1
+            else +0 
+        */
+        if (region.find({point.first + 1, point.second}) == region.end()) {
+            if (region.find({point.first + 1, point.second - 1}) != region.end()) {
+                ++sides;
+            }
+            else if (region.find({point.first, point.second - 1}) == region.end()) {
+                ++sides;
+            }
+        }
+    }
+    return area * sides;
+}
+
+void totalPrice(const std::vector<std::vector<char>>& grid) {
     // bfs
     std::vector<std::vector<bool>> visited(grid.size(), std::vector<bool>(grid[0].size(), false));
-    int price = 0;
+    int price1 = 0;
+    int price2 = 0;
     
     // Every coordinate gets to try, if visited, skip
     for (int r = 0; r < grid.size(); ++r) {
@@ -92,10 +165,12 @@ int totalPrice(const std::vector<std::vector<char>>& grid) {
                     search.push_back({row - 1, col, curChar});
                 }
             }
-            price += calcPrice(region);
+            price1 += part1(region);
+            price2 += part2(region);
         }
     }
-    return price;
+    std::cout << "Part 1: " << price1 << std::endl;
+    std::cout << "Part 2: " << price2 << std::endl;
 }
 
 void printGrid(const std::vector<std::vector<char>>& grid) {
@@ -119,7 +194,5 @@ int main() {
         grid.push_back(row);
     }
 
-    // printGrid(grid);
-
-    std::cout << totalPrice(grid) << std::endl;
+    totalPrice(grid);
 }
