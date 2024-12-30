@@ -14,18 +14,66 @@ bool allowed(const std::vector<char>& allowedChars, char ch) {
     return false;
 }
 
-std::vector<int> findSubstr(const std::string& line, std::string substr) {
-    std::vector<int> positions;
+// Return strings of valid mul commands
+std::vector<std::string> positions(std::string line) {
+    std::vector<std::string> ret;
+    std::string substr = "mul(";
+    std::vector<size_t> positions;
     size_t pos = line.find(substr, 0);
     while(pos != std::string::npos) {
         positions.push_back(pos);
         pos = line.find(substr, pos + 1);
     }
-    return positions;
+    std::vector<char> allowedChars = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
+    for (int i = 0; i < positions.size(); ++i) {
+        // Scan up to 8 characters
+        bool commaSeen = false;
+        bool flag = true;
+        int stridx = positions[i] + 4;
+        int length = 0;
+        for(; length < 8; ++length) {
+            int curIdx = stridx + length;
+
+            if (curIdx >= line.size()) {
+                flag = false;
+                break;
+            }
+            if (length > 3 && !commaSeen) {
+                flag = false;
+                break;
+            }
+
+            // constraints on characters
+            if (commaSeen && line[curIdx - 1] != ',') {
+                allowedChars = {'1', '2', '3', '4', '5', '6', '7', '8', '9', ')', '0'};
+            }
+            else if (!commaSeen && length != 0) {
+                allowedChars = {'1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '0'};
+            }
+
+            if(!allowed(allowedChars, line[curIdx])) {
+                flag = false;
+                break;
+            }
+
+            if (line[curIdx] == ',') {
+                commaSeen = true;
+            }
+            else if (line[curIdx] == ')') {
+                break;
+            }
+        }
+        if (line[stridx + length] != ')') {
+            flag = false;
+        }
+        if (flag) {
+            ret.push_back(line.substr(stridx, length));
+        }
+    }
+    return ret;
 }
 
-// Return strings of valid mul commands
-std::vector<std::pair<int, std::string>> positions(std::string line) {
+std::vector<std::pair<int, std::string>> part2(std::string line) {
     std::vector<std::pair<int, std::string>> ret;
     std::string substr = "mul(";
     std::vector<size_t> positions;
@@ -83,13 +131,43 @@ std::vector<std::pair<int, std::string>> positions(std::string line) {
     return ret;
 }
 
+std::vector<int> findSubstr(const std::string& line, std::string substr) {
+    std::vector<int> positions;
+    size_t pos = line.find(substr, 0);
+    while(pos != std::string::npos) {
+        positions.push_back(pos);
+        pos = line.find(substr, pos + 1);
+    }
+    return positions;
+}
+
 int main(int argc, char** argv) {
 
     std::string line;
+    std::vector<std::string> lines;
     int mulCount = 0;
-    bool active = true;
     while(getline(std::cin, line)) {
-        std::vector<std::pair<int, std::string>> elts = positions(line);
+        lines.push_back(line);
+    }
+
+    for (const auto& line : lines) {
+        std::vector<std::string> linePos = positions(line);
+        // calculate the muls
+        for (const auto& elt : linePos) {
+            int x, y;
+            char comma;
+            std::stringstream ss(elt);
+            ss >> x >> comma >> y;
+            mulCount += x * y;
+        }
+    }
+
+    std::cout << "Part 1: " << mulCount << std::endl;
+
+    mulCount = 0;
+    bool active = true;
+    for (const auto& line : lines) {
+        std::vector<std::pair<int, std::string>> elts = part2(line);
 
         std::vector<int> dos = findSubstr(line, "do()");
         std::vector<int> donts = findSubstr(line, "don't()");
@@ -144,7 +222,6 @@ int main(int argc, char** argv) {
                 active = false;
             }
 
-
             if(active) {
                 int x, y;
                 char comma;
@@ -153,17 +230,9 @@ int main(int argc, char** argv) {
                 mulCount += x * y;
             }
         }
-        // calculate the muls
-        // for (const auto& elt : elts) {
-        //     int x, y;
-        //     char comma;
-        //     std::stringstream ss(elt.second);
-        //     ss >> x >> comma >> y;
-        //     mulCount += x * y;
-        // }
-
     }
-    std::cout << mulCount << std::endl;
+
+    std::cout << "Part 2: " << mulCount << std::endl;
 
     return 0;
 }
