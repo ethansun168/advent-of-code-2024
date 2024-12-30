@@ -4,7 +4,22 @@
 #include <cmath>
 #include <sstream>
 
-void increment(std::vector<int>& vec, int index) {
+void incrementBool(std::vector<bool>& vec, int index) {
+    // base case
+    if (index == vec.size()) {
+        return;
+    }
+    if (vec[index] == 0) {
+        vec[index] = 1;
+        return;
+    }
+    // recurse
+    vec[index] = 0;
+    incrementBool(vec, index + 1);
+    return;
+}
+
+void incrementInt(std::vector<int>& vec, int index) {
     // base case
     if (index == vec.size()) {
         return;
@@ -20,11 +35,37 @@ void increment(std::vector<int>& vec, int index) {
     
     // recurse
     vec[index] = 0;
-    increment(vec, index + 1);
+    incrementInt(vec, index + 1);
     return;
 }
 
-bool evaluate(long num, const std::vector<long>& vec) {
+bool part1(long num, const std::vector<long>& vec) {
+    // can the ints in vec evaluate to num?
+    // 0 means addition, 1 means mult
+    std::vector<bool> ops(vec.size() - 1, 0);
+    int count = 0;
+    while (count < std::pow(2, ops.size())) {
+        long x = vec[0];
+        for (int i = 0; i < ops.size(); ++i) {
+            if (ops[i] == 0) {
+                // add
+                x += vec[i + 1];
+            }
+            else {
+                // mult
+                x *= vec[i + 1];
+            }
+        }
+        if (num == x) {
+            return true;
+        }
+        incrementBool(ops, 0);
+        ++count;
+    }
+    return false;
+}
+
+bool part2(long num, const std::vector<long>& vec) {
     // can the ints in vec evaluate to num?
     // 0 means addition, 1 means mult
     std::vector<int> ops(vec.size() - 1, 0);
@@ -48,51 +89,16 @@ bool evaluate(long num, const std::vector<long>& vec) {
         if (num == x) {
             return true;
         }
-        increment(ops, 0);
+        incrementInt(ops, 0);
         ++count;
     }
     return false;
 }
 
-// void printVec(const std::vector<int>& vec) {
-//     for (const auto elt : vec) {
-//         std::cout << elt << " ";
-//     }
-//     std::cout << std::endl;
-// }
-
-// int main() {
-//     std::vector<int> vec = {0,0,0,0};
-//     increment(vec, 0);
-//     printVec(vec);
-
-//     vec = {1,0,0,0};
-//     increment(vec, 0);
-//     printVec(vec);
-
-
-//     vec = {1,2,0,0};
-//     increment(vec, 0);
-//     printVec(vec);
-
-
-//     vec = {2,1,0,0};
-//     increment(vec, 0);
-//     printVec(vec);
-
-
-//     vec = {2,2,1,0};
-//     increment(vec, 0);
-//     printVec(vec);
-
-//     vec = {2,1,2,0};
-//     increment(vec, 0);
-//     printVec(vec);
-// }
-
 int main(int argc, char** argv) {
     // brute force
-    long count = 0;
+    long count1 = 0;
+    long count2 = 0;
     std::string line;
     while (getline(std::cin, line)) {
         std::stringstream ss(line);
@@ -104,9 +110,14 @@ int main(int argc, char** argv) {
         while (ss >> x) {
             vec.push_back(x);
         }
-        if(evaluate(num, vec)) {
-            count += num;
+        if(part1(num, vec)) {
+            count1 += num;
+        }
+        if(part2(num, vec)) {
+            count2 += num;
         }
     }
-    std::cout << count << std::endl;
+    std::cout << "Part 1: " << count1 << std::endl;
+    std::cout << "Part 2: " << count2 << std::endl;
+
 }
