@@ -131,6 +131,73 @@ int findWord(const std::vector<std::vector<char>>& grid, std::string str) {
     return totalCount;
 }
 
+// four orientations
+// M . M    M . S
+// . A .    . A .
+// S . S    M . S
+
+// S . M    S . S
+// . A .    . A .
+// S . M    M . M
+
+// Just check top left corner
+bool verify(const std::vector<std::vector<char>>& grid, const int row, const int col) {
+    if (
+        grid[row][col] == 'M' &&
+        grid[row][col + 2] == 'M' &&
+        grid[row + 2][col] == 'S' &&
+        grid[row + 2][col + 2] == 'S'
+    ) {
+        return true;
+    }
+
+    
+    if (
+        grid[row][col] == 'M' &&
+        grid[row][col + 2] == 'S' &&
+        grid[row + 2][col] == 'M' &&
+        grid[row + 2][col + 2] == 'S'
+    ) {
+        return true;
+    }
+
+    if (
+        grid[row][col] == 'S' &&
+        grid[row][col + 2] == 'M' &&
+        grid[row + 2][col] == 'S' &&
+        grid[row + 2][col + 2] == 'M'
+    ) {
+        return true;
+    }
+
+    if (
+        grid[row][col] == 'S' &&
+        grid[row][col + 2] == 'S' &&
+        grid[row + 2][col] == 'M' &&
+        grid[row + 2][col + 2] == 'M'
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+int findXMAS(const std::vector<std::vector<char>>& grid) {
+    int count = 0;
+
+    for (int row = 0; row < grid.size() - 2; ++row) {
+        for (int col = 0; col < grid[0].size() - 2; ++col) {
+            if ((grid[row][col] == 'M' || grid[row][col] == 'S') && grid[row + 1][col + 1] == 'A') {
+                if (verify(grid, row, col)) {
+                    ++count;
+                }
+            }
+        }
+    }
+
+    return count;
+}
+
 int main(int argc, char** argv) {
     std::string line;
     std::vector<std::vector<char>> grid;
@@ -143,6 +210,7 @@ int main(int argc, char** argv) {
         }
         grid.push_back(row);
     }
-    std::cout << findWord(grid, "XMAS") << std::endl;
+    std::cout << "Part 1: " << findWord(grid, "XMAS") << std::endl;
+    std::cout << "Part 2: " << findXMAS(grid) << std::endl;
     return 0;
 }
